@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.user.mkfireworks</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/caffeinate</string>
+        <string>-i</string>
+        <string>/usr/bin/python3</string>
+        <string>/Users/mj/.gemini/antigravity/playground/baryonic-galaxy/sync_fireworks.py</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>12</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/tmp/mkfireworks.out</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/mkfireworks.err</string>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>

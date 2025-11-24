@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+audio/
+*.json
+*.out
+*.err
+.DS_Store
