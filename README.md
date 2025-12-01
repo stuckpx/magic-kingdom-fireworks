@@ -7,12 +7,13 @@ This script synchronizes your local audio playback with the daily fireworks show
 -   **Automatic Schedule Detection**: Checks the daily schedule for Magic Kingdom to find the fireworks show time.
 -   **Audio Download**: Automatically downloads the correct audio track for the show (Happily Ever After, Minnie's Wonderful Christmastime Fireworks, Disney Enchantment) from YouTube using `yt-dlp`.
 -   **Precise Timing**: Waits until the exact start time of the show to play the audio.
+-   **Smart Offset**: If the show has already started, automatically calculates the time offset and plays the audio from the correct point (requires `ffmpeg`).
 -   **Daily Schedule**: Includes a `launchd` plist to run the script automatically every day at 12:00 PM.
 
 ## Prerequisites
 
 -   Python 3
--   `ffmpeg` (optional, but recommended for best audio quality)
+-   `ffmpeg` (Required for smart offset support: `brew install ffmpeg`)
 -   `yt-dlp` (`pip install yt-dlp`)
 -   `requests` (`pip install requests`)
 
