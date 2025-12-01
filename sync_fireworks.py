@@ -128,6 +128,28 @@ def download_audio(show_name):
         print(f"Error downloading audio: {e}")
         return None
 
+def get_audio_duration(filepath):
+    """
+    Returns the duration of the audio file in seconds using ffprobe.
+    Returns None if ffprobe fails or is not found.
+    """
+    if not shutil.which("ffprobe"):
+        return None
+        
+    cmd = [
+        "ffprobe", 
+        "-v", "error", 
+        "-show_entries", "format=duration", 
+        "-of", "default=noprint_wrappers=1:nokey=1", 
+        filepath
+    ]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        return float(result.stdout.strip())
+    except Exception as e:
+        print(f"Error getting duration: {e}")
+        return None
+
 def main():
     print("--- Magic Kingdom Fireworks Sync ---")
     show_name, show_time = get_today_show()
@@ -147,6 +169,35 @@ def main():
     
     if wait_seconds < 0:
         print(f"Show time {show_time} has already passed.")
+        offset = abs(wait_seconds)
+        print(f"Show started {timedelta(seconds=int(offset))} ago.")
+        
+        # Check if we are still within the show duration
+        duration = get_audio_duration(audio_file)
+        if duration:
+            if offset < duration:
+                print(f"Jumping to {timedelta(seconds=int(offset))} in the track...")
+                try:
+                    # Use ffplay to seek
+                    # -ss: seek to position
+                    # -nodisp: no graphical window
+                    # -autoexit: exit when done
+                    subprocess.run(['ffplay', '-ss', str(offset), '-nodisp', '-autoexit', audio_file])
+                except Exception as e:
+                    print(f"Error playing with ffplay: {e}")
+            else:
+                print("Show has finished (offset > duration).")
+        else:
+            print("Could not determine audio duration to check if show is still running.")
+            # Fallback: try to play if it's within a reasonable time (e.g. 20 mins)
+            if offset < 1200: 
+                print("Attempting to play from offset anyway...")
+                try:
+                    subprocess.run(['ffplay', '-ss', str(offset), '-nodisp', '-autoexit', audio_file])
+                except Exception as e:
+                    print(f"Error playing with ffplay: {e}")
+            else:
+                print("Show likely finished.")
         return
         
     print(f"Waiting for {show_name} at {show_time}")
@@ -164,7 +215,10 @@ def main():
             
     print("It's showtime!")
     try:
-        subprocess.run(['afplay', audio_file])
+        if shutil.which("ffplay"):
+             subprocess.run(['ffplay', '-nodisp', '-autoexit', audio_file])
+        else:
+            subprocess.run(['afplay', audio_file])
     except Exception as e:
         print(f"Error playing audio: {e}")
 
